@@ -1,0 +1,22 @@
+{
+  "name": "glob-rx",
+  "version": "1.0.0",
+  "description": "RxJS wrapper around glob function.",
+  "main": "src/glob-rx.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "glob",
+    "rx"
+  ],
+  "author": "Dave F. Baskin <dfbaskin@gmail.com>",
+  "license": "MIT",
+  "engines": {
+    "node": ">=4.0"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+  }
+}
