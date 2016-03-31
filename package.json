@@ -13,10 +13,17 @@
   "author": "Dave F. Baskin <dfbaskin@gmail.com>",
   "license": "MIT",
   "engines": {
-    "node": ">=4.0"
+    "node": ">=4.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tools-rx/glob-rx.git"
   },
   "dependencies": {
+    "glob": "^7.0.3",
+    "rxjs-es": "^5.0.0-beta.4"
   },
   "devDependencies": {
+    "standard": "^6.0.8"
   }
 }
