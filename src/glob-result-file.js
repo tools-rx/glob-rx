@@ -27,6 +27,6 @@ export class GlobResultFile {
   }
 
   get hasName () {
-    return (this.path && this.name) || this.name
+    return (!!this.path && !!this.name) || !!this.name
   }
 }
