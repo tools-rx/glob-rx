@@ -4,29 +4,65 @@ import {GlobResultFile} from '../src/glob-result-file'
 
 describe('glob result file', () => {
   describe('with defaults', () => {
+    let globResult
+
+    beforeEach(() => {
+      globResult = new GlobResultFile()
+    })
+
     it('should have no name', () => {
-      var actual = new GlobResultFile()
-      expect(actual.hasName).toBe(false)
+      expect(globResult.hasName).toBe(false)
     })
 
     it('should have undefined fullname', () => {
-      var actual = new GlobResultFile()
-      expect(actual.fullname).toBeUndefined()
+      expect(globResult.fullname).toBeUndefined()
     })
 
     it('should have undefined basename', () => {
-      var actual = new GlobResultFile()
-      expect(actual.basename).toBeUndefined()
+      expect(globResult.basename).toBeUndefined()
     })
 
     it('should have undefined dirname', () => {
-      var actual = new GlobResultFile()
-      expect(actual.dirname).toBeUndefined()
+      expect(globResult.dirname).toBeUndefined()
     })
 
     it('should have undefined extname', () => {
-      var actual = new GlobResultFile()
-      expect(actual.extname).toBeUndefined()
+      expect(globResult.extname).toBeUndefined()
     })
+  })
+  
+  describe('with basedir and path', () => {
+    let globResult
+
+    beforeEach(() => {
+      globResult = Object.assign(new GlobResultFile(), {
+        basedir: '/tmp/glob-files',
+        name: 'a/b/c/file.txt'
+      })
+    })
+    
+    it('should have name', () => {
+      expect(globResult.hasName).toBe(true)
+    })
+
+    it('should have fullname', () => {
+      expect(normalizeSeparators(globResult.fullname)).toBe('/tmp/glob-files/a/b/c/file.txt')
+    })
+
+    it('should have basename', () => {
+      expect(globResult.basename).toBe('file.txt')
+    })
+
+    it('should have dirname', () => {
+      expect(normalizeSeparators(globResult.dirname)).toBe('/tmp/glob-files/a/b/c')
+    })
+
+    it('should have extname', () => {
+      expect(globResult.extname).toBe('.txt')
+    })
+
+    function normalizeSeparators(path) {
+      return path ? path.replace(/\\/g, '/') : path
+    }
   })
 })

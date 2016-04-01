@@ -4,7 +4,7 @@ export class GlobResultFile {
 
   get fullname () {
     if (this.hasName) {
-      return path.join(this.path || '', this.name)
+      return path.join(this.basedir || '', this.name)
     }
   }
 
@@ -27,6 +27,6 @@ export class GlobResultFile {
   }
 
   get hasName () {
-    return (!!this.path && !!this.name) || !!this.name
+    return (!!this.basedir && !!this.name) || !!this.name
   }
 }
