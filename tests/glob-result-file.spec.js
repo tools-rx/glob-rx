@@ -30,7 +30,7 @@ describe('glob result file', () => {
       expect(globResult.extname).toBeUndefined()
     })
   })
-  
+
   describe('with basedir and path', () => {
     let globResult
 
@@ -40,7 +40,7 @@ describe('glob result file', () => {
         name: 'a/b/c/file.txt'
       })
     })
-    
+
     it('should have name', () => {
       expect(globResult.hasName).toBe(true)
     })
@@ -61,7 +61,7 @@ describe('glob result file', () => {
       expect(globResult.extname).toBe('.txt')
     })
 
-    function normalizeSeparators(path) {
+    function normalizeSeparators (path) {
       return path ? path.replace(/\\/g, '/') : path
     }
   })

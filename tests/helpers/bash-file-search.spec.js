@@ -7,9 +7,7 @@ import {bashFileSearch} from './bash-file-search'
 const testsPath = path.join(__dirname, '..')
 
 describe('bash file search', () => {
-
   it('should return expected file list', (done) => {
-
     let expected = {
       pattern: '**/*.js',
       matches: [
@@ -24,12 +22,11 @@ describe('bash file search', () => {
     bashFileSearch('**/*.js', testsPath)
       .subscribe(
         (found) => {
-          found.matches = _.sortBy(found.matches, fn => fn)
+          found.matches = _.sortBy(found.matches, (fn) => fn)
           expect(found).toEqual(expected)
         },
         (err) => done.fail(err),
         () => done()
       )
   })
-
 })
