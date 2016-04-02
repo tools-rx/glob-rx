@@ -41,12 +41,16 @@ export const defaultFileSet = {
   ]
 }
 
-export function rootWorkPath (path) {
-  return path ? path.join(ROOT_PATH, path) : ROOT_PATH
+export function unixStylePath (path) {
+  return path.replace(/\\/g, '/')
 }
 
-export function localWorkPath (path) {
-  return path ? path.join(LOCAL_PATH, path) : LOCAL_PATH
+export function rootWorkPath (offsetPath) {
+  return offsetPath ? path.join(ROOT_PATH, offsetPath) : ROOT_PATH
+}
+
+export function localWorkPath (offsetPath) {
+  return offsetPath ? path.join(LOCAL_PATH, offsetPath) : LOCAL_PATH
 }
 
 // export function buildFileSet(fileSet) {
