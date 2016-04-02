@@ -1,4 +1,4 @@
-import {Observable} from 'rxjs-es'
+import {Observable} from 'rxjs'
 import glob from 'glob'
 import {GlobResultFile} from './glob-result-file'
 
