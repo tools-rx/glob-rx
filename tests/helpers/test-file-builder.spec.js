@@ -56,11 +56,11 @@ describe('test file builder', () => {
       mkdirpRx(localWorkPath('a/b/c'))
         .mergeMap(() => writeFileRx(localWorkPath('a/b/c/file.txt'), 'some content'))
         .mergeMap(() => cleanPath(localWorkPath()))
-        .do(path => {
+        .do((path) => {
           expect(unixStylePath(path)).toBe(unixStylePath(localWorkPath()))
         })
         .mergeMap(() => bashFileSearch('**/*', localWorkPath()))
-        .do(result => {
+        .do((result) => {
           expect(result).toEqual(emptyBashFileSearchResult)
         })
         .subscribe(getSubscriber(done))
@@ -75,11 +75,11 @@ describe('test file builder', () => {
     it('should return empty list for undefined file list', (done) => {
       buildFiles(localWorkPath())
         .reduce(concatListItems, [])
-        .do(fileList => {
+        .do((fileList) => {
           expect(fileList).toEqual([])
         })
         .flatMap(() => bashFileSearch('**/*', localWorkPath()))
-        .do(actual => {
+        .do((actual) => {
           expect(actual).toEqual(emptyBashFileSearchResult)
         })
         .subscribe(getSubscriber(done))
@@ -95,16 +95,16 @@ describe('test file builder', () => {
           'a',
           'a/b',
           'a/b/c',
-          'a/b/c/file.txt',
+          'a/b/c/file.txt'
         ]
       }
       buildFiles(localWorkPath(), buildList)
         .reduce(concatListItems, [])
-        .do(fileList => {
+        .do((fileList) => {
           expect(fileList).toEqual(buildList)
         })
         .flatMap(() => bashFileSearch('**/*', localWorkPath()))
-        .do(actual => {
+        .do((actual) => {
           expect(actual).toEqual(expected)
         })
         .subscribe(getSubscriber(done))
@@ -117,10 +117,10 @@ function concatListItems (lst, item) {
   return lst
 }
 
-function getSubscriber(done) {
+function getSubscriber (done) {
   return {
-    next() { },
-    error(err) { done.fail(err) },
-    complete() { done() }
+    next () { },
+    error (err) { done.fail(err) },
+    complete () { done() }
   }
 }

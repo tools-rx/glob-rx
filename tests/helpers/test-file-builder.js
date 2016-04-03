@@ -56,7 +56,7 @@ export function localWorkPath (offsetPath) {
 // export function buildFileSet(fileSet) {
 // }
 
-export function cleanPath(basePath) {
+export function cleanPath (basePath) {
   return rimrafRx(basePath)
     .mergeMap(() => mkdirpRx(basePath), () => basePath)
 }
