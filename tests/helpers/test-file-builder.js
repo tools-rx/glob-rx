@@ -53,9 +53,6 @@ export function localWorkPath (offsetPath) {
   return offsetPath ? path.join(LOCAL_PATH, offsetPath) : LOCAL_PATH
 }
 
-// export function buildFileSet(fileSet) {
-// }
-
 export function cleanPath (basePath) {
   return rimrafRx(basePath)
     .mergeMap(() => mkdirpRx(basePath), () => basePath)
@@ -79,11 +76,17 @@ export function buildFiles (basePath, fileList) {
 export function buildDirectories (basePath, directoryList) {
   return Observable.from(directoryList || [])
     .map((directoryName) => {
-      let path = path.join(basePath, directoryName)
-      return { path }
+      let dirName = path.join(basePath, directoryName)
+      return {
+        dirName,
+        originalName: directoryName
+      }
     })
-    .mergeMap((directory) => mkdirpRx(directory.path), (directory) => directory)
+    .mergeMap((directory) => mkdirpRx(directory.dirName), (directory) => directory.originalName)
 }
+
+// export function buildFileSet(fileSet) {
+// }
 
 /*
  class FileBuilder {

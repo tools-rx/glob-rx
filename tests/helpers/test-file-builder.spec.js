@@ -2,6 +2,7 @@
 
 import path from 'path'
 import fs from 'fs'
+import _ from 'lodash'
 import {
   ROOT_PATH,
   LOCAL_PATH,
@@ -9,7 +10,8 @@ import {
   rootWorkPath,
   localWorkPath,
   cleanPath,
-  buildFiles
+  buildFiles,
+  buildDirectories
 } from './test-file-builder'
 import mkdirp from 'mkdirp'
 import {Observable} from 'rxjs'
@@ -109,6 +111,118 @@ describe('test file builder', () => {
         })
         .subscribe(getSubscriber(done))
     })
+
+    it('should create multiple files', (done) => {
+      let buildList = [
+        'a/b/c/one.txt',
+        'x/y/z/two.txt',
+        'a/three.txt',
+        'x/v/four.txt'
+      ]
+      let expected = {
+        pattern: '**/*',
+        matches: [
+          'a',
+          'a/b',
+          'a/b/c',
+          'a/b/c/one.txt',
+          'a/three.txt',
+          'x',
+          'x/v',
+          'x/v/four.txt',
+          'x/y',
+          'x/y/z',
+          'x/y/z/two.txt'
+        ]
+      }
+      buildFiles(localWorkPath(), buildList)
+        .reduce(concatListItems, [])
+        .do((fileList) => {
+          expect(sortedFileList(fileList)).toEqual(sortedFileList(buildList))
+        })
+        .flatMap(() => bashFileSearch('**/*', localWorkPath()))
+        .do((actual) => {
+          expect(sortedFileList(actual.matches)).toEqual(sortedFileList(expected.matches))
+        })
+        .subscribe(getSubscriber(done))
+    })
+  })
+
+  describe('build directories', () => {
+    beforeEach((done) => {
+      cleanPath(localWorkPath()).subscribe(getSubscriber(done))
+    })
+
+    it('should return empty list for undefined directory list', (done) => {
+      buildDirectories(localWorkPath())
+        .reduce(concatListItems, [])
+        .do((dirList) => {
+          expect(dirList).toEqual([])
+        })
+        .mergeMap(() => bashFileSearch('**/*', localWorkPath()))
+        .do((actual) => {
+          expect(actual).toEqual(emptyBashFileSearchResult)
+        })
+        .subscribe(getSubscriber(done))
+    })
+
+    it('should create single directory', (done) => {
+      let buildList = [
+        'a/b/c'
+      ]
+      let expected = {
+        pattern: '**/*',
+        matches: [
+          'a',
+          'a/b',
+          'a/b/c'
+        ]
+      }
+      buildDirectories(localWorkPath(), buildList)
+        .reduce(concatListItems, [])
+        .do((dirList) => {
+          expect(dirList).toEqual(buildList)
+        })
+        .mergeMap(() => bashFileSearch('**/*', localWorkPath()))
+        .do((actual) => {
+          expect(actual).toEqual(expected)
+        })
+        .subscribe(getSubscriber(done))
+    })
+
+    it('should create multiple directories', (done) => {
+      let buildList = [
+        'a/b/c',
+        'x/y/z',
+        'a/x/y/z',
+        'x/v'
+      ]
+      let expected = {
+        pattern: '**/*',
+        matches: [
+          'a',
+          'a/b',
+          'a/b/c',
+          'a/x',
+          'a/x/y',
+          'a/x/y/z',
+          'x',
+          'x/y',
+          'x/y/z',
+          'x/v'
+        ]
+      }
+      buildDirectories(localWorkPath(), buildList)
+        .reduce(concatListItems, [])
+        .do((dirList) => {
+          expect(sortedFileList(dirList)).toEqual(sortedFileList(buildList))
+        })
+        .flatMap(() => bashFileSearch('**/*', localWorkPath()))
+        .do((actual) => {
+          expect(sortedFileList(actual.matches)).toEqual(sortedFileList(expected.matches))
+        })
+        .subscribe(getSubscriber(done))
+    })
   })
 })
 
@@ -123,4 +237,8 @@ function getSubscriber (done) {
     error (err) { done.fail(err) },
     complete () { done() }
   }
+}
+
+function sortedFileList (fileList) {
+  return _.sortBy(fileList, (fn) => fn)
 }
