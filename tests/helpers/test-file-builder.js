@@ -2,9 +2,9 @@ import path from 'path'
 import fs from 'fs'
 import {Observable} from 'rxjs'
 import mkdirp from 'mkdirp'
+import rimraf from 'rimraf'
 
 // import Rx from "rx"
-// import rimraf from "rimraf"
 // import _ from "lodash"
 
 export const ROOT_PATH = '/tmp/glob-test'
@@ -12,8 +12,8 @@ export const LOCAL_PATH = path.join(__dirname, '..', '..', 'glob-test')
 
 const writeFileRx = Observable.bindNodeCallback(fs.writeFile)
 const mkdirpRx = Observable.bindNodeCallback(mkdirp)
+const rimrafRx = Observable.bindNodeCallback(rimraf)
 // const symlinkRx = Observable.bindNodeCallback(fs.symlink)
-// const rimrafRx = Observable.bindNodeCallback(rimraf)
 
 export const defaultFileSet = {
   localFiles: [
@@ -56,31 +56,33 @@ export function localWorkPath (offsetPath) {
 // export function buildFileSet(fileSet) {
 // }
 
+export function cleanPath(basePath) {
+  return rimrafRx(basePath)
+    .mergeMap(() => mkdirpRx(basePath), () => basePath)
+}
+
 export function buildFiles (basePath, fileList) {
-  return Observable.create((observer) => {
-    return Observable.from(fileList || [])
-      .map((fileName) => {
-        let full = path.join(basePath, fileName)
-        return {
-          path: path.dirname(full),
-          name: path.basename(full),
-          full
-        }
-      })
-      .mergeMap((file) => mkdirpRx(file.path), (file) => file)
-      .margeMap((file) => writeFileRx(file.full, `content ${file.name}`), (file) => file)
-  })
+  return Observable.from(fileList || [])
+    .map((fileName) => {
+      let full = path.join(basePath, fileName)
+      return {
+        path: path.dirname(full),
+        name: path.basename(full),
+        full,
+        originalName: fileName
+      }
+    })
+    .mergeMap((file) => mkdirpRx(file.path), (file) => file)
+    .mergeMap((file) => writeFileRx(file.full, `content ${file.name}`), (file) => file.originalName)
 }
 
 export function buildDirectories (basePath, directoryList) {
-  return Observable.create((observer) => {
-    return Observable.from(directoryList || [])
-      .map((directoryName) => {
-        let path = path.join(basePath, directoryName)
-        return { path }
-      })
-      .mergeMap((directory) => mkdirpRx(directory.path), (directory) => directory)
-  })
+  return Observable.from(directoryList || [])
+    .map((directoryName) => {
+      let path = path.join(basePath, directoryName)
+      return { path }
+    })
+    .mergeMap((directory) => mkdirpRx(directory.path), (directory) => directory)
 }
 
 /*

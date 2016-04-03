@@ -2,6 +2,12 @@ import {Observable} from 'rxjs'
 import {spawn} from 'child_process'
 import _ from 'lodash'
 
+export const emptyBashFileSearchResult = {
+  pattern: '**/*',
+  matches: [
+  ]
+}
+
 export function bashFileSearch (pattern, basedir) {
   let bashCommandLine = [
     '-O', 'globstar',
