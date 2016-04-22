@@ -38,8 +38,8 @@ export const defaultFileSet = {
   ]
 }
 
-export function buildFileSet(fileSet) {
-  fileSet = fileSet || {};
+export function buildFileSet (fileSet) {
+  fileSet = fileSet || {}
   return Observable.concat(
     buildFiles(LOCAL_PATH, fileSet.localFiles),
     buildDirectories(LOCAL_PATH, fileSet.localDirectories),

@@ -2,7 +2,6 @@
 
 import path from 'path'
 import fs from 'fs'
-import _ from 'lodash'
 import {
   ROOT_PATH,
   LOCAL_PATH,
@@ -19,6 +18,7 @@ import {
 import mkdirp from 'mkdirp'
 import {Observable} from 'rxjs'
 import {bashFileSearch, emptyBashFileSearchResult} from './bash-file-search'
+import {concatListItems, getSubscriber, sortedFileList} from './test-helpers'
 
 const writeFileRx = Observable.bindNodeCallback(fs.writeFile)
 const mkdirpRx = Observable.bindNodeCallback(mkdirp)
@@ -291,7 +291,7 @@ describe('test file builder', () => {
           return Observable.concat(
             bashFileSearch('**/*', localWorkPath()),
             bashFileSearch('**/*', rootWorkPath()))
-            .mergeMap(m => m.matches)
+            .mergeMap((m) => m.matches)
             .reduce(concatListItems, [])
         })
         .do((actual) => {
@@ -305,7 +305,7 @@ describe('test file builder', () => {
         .concat(defaultFileSet.localDirectories)
         .concat(defaultFileSet.rootFiles)
         .concat(defaultFileSet.rootDirectories)
-        .concat(defaultFileSet.symLinks.map(s => s[0]))
+        .concat(defaultFileSet.symLinks.map((s) => s[0]))
       let expected = [
         'a',
         'a/abcdef',
@@ -349,7 +349,7 @@ describe('test file builder', () => {
           return Observable.concat(
             bashFileSearch('**/*', localWorkPath()),
             bashFileSearch('**/*', rootWorkPath()))
-            .mergeMap(m => m.matches)
+            .mergeMap((m) => m.matches)
             .reduce(concatListItems, [])
         })
         .do((actual) => {
@@ -359,20 +359,3 @@ describe('test file builder', () => {
     })
   })
 })
-
-function concatListItems (lst, item) {
-  lst.push(item)
-  return lst
-}
-
-function getSubscriber (done) {
-  return {
-    next () { },
-    error (err) { done.fail(err) },
-    complete () { done() }
-  }
-}
-
-function sortedFileList (fileList) {
-  return _.sortBy(fileList, (fn) => fn)
-}

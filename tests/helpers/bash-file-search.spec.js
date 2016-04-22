@@ -16,7 +16,8 @@ describe('bash file search', () => {
         'helpers/bash-file-search.js',
         'helpers/bash-file-search.spec.js',
         'helpers/test-file-builder.js',
-        'helpers/test-file-builder.spec.js'
+        'helpers/test-file-builder.spec.js',
+        'helpers/test-helpers.js'
       ]
     }
 
