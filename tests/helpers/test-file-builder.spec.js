@@ -11,7 +11,8 @@ import {
   localWorkPath,
   cleanPath,
   buildFiles,
-  buildDirectories
+  buildDirectories,
+  buildSymLinks
 } from './test-file-builder'
 import mkdirp from 'mkdirp'
 import {Observable} from 'rxjs'
@@ -216,6 +217,52 @@ describe('test file builder', () => {
         .reduce(concatListItems, [])
         .do((dirList) => {
           expect(sortedFileList(dirList)).toEqual(sortedFileList(buildList))
+        })
+        .flatMap(() => bashFileSearch('**/*', localWorkPath()))
+        .do((actual) => {
+          expect(sortedFileList(actual.matches)).toEqual(sortedFileList(expected.matches))
+        })
+        .subscribe(getSubscriber(done))
+    })
+  })
+
+  describe('build symbolic links', () => {
+    beforeEach((done) => {
+      cleanPath(localWorkPath()).subscribe(getSubscriber(done))
+    })
+
+    it('should return empty list for undefined symlink path list', (done) => {
+      buildSymLinks(localWorkPath())
+        .reduce(concatListItems, [])
+        .do((fileList) => {
+          expect(fileList).toEqual([])
+        })
+        .flatMap(() => bashFileSearch('**/*', localWorkPath()))
+        .do((actual) => {
+          expect(actual).toEqual(emptyBashFileSearchResult)
+        })
+        .subscribe(getSubscriber(done))
+    })
+
+    it('should create symbolic link', (done) => {
+      let links = [
+        [ 'a/symlink/a/b/c', 'a/symlink/a' ]
+      ]
+      let expected = {
+        "pattern": "**/*",
+        "matches": [
+          "a",
+          "a/symlink",
+          "a/symlink/a",
+          "a/symlink/a/b",
+          "a/symlink/a/b/c",
+          "a/symlink/a/b/c/b"
+        ]
+      }
+      buildSymLinks(localWorkPath(), links)
+        .reduce(concatListItems, [])
+        .do((symLinkList) => {
+          expect(sortedFileList(symLinkList)).toEqual(sortedFileList(links.map(v => v[0])))
         })
         .flatMap(() => bashFileSearch('**/*', localWorkPath()))
         .do((actual) => {

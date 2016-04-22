@@ -4,16 +4,13 @@ import {Observable} from 'rxjs'
 import mkdirp from 'mkdirp'
 import rimraf from 'rimraf'
 
-// import Rx from "rx"
-// import _ from "lodash"
-
 export const ROOT_PATH = '/tmp/glob-test'
 export const LOCAL_PATH = path.join(__dirname, '..', '..', 'glob-test')
 
 const writeFileRx = Observable.bindNodeCallback(fs.writeFile)
 const mkdirpRx = Observable.bindNodeCallback(mkdirp)
 const rimrafRx = Observable.bindNodeCallback(rimraf)
-// const symlinkRx = Observable.bindNodeCallback(fs.symlink)
+const symlinkRx = Observable.bindNodeCallback(fs.symlink)
 
 export const defaultFileSet = {
   localFiles: [
@@ -85,38 +82,30 @@ export function buildDirectories (basePath, directoryList) {
     .mergeMap((directory) => mkdirpRx(directory.dirName), (directory) => directory.originalName)
 }
 
+export function buildSymLinks (basePath, symLinkList) {
+  return Observable.from(symLinkList || [])
+    .map((paths) => {
+      let [symLinkName, directoryName] = paths;
+      let dirName = path.join(basePath, directoryName)
+      let symLink = path.join(basePath, symLinkName)
+      return { dirName, symLink, originalName: symLinkName }
+    })
+    .mergeMap((info) => {
+      let symLinkPath = info.symLink;
+      if (process.platform === "win32") {
+        symLinkPath = path.dirname(symLinkPath)
+      }
+      return mkdirpRx(symLinkPath).map(() => info)
+    })
+    .mergeMap((info) => {
+      return symlinkRx(info.dirName, info.symLink, "junction").map(() => info.originalName)
+    })
+}
+
 // export function buildFileSet(fileSet) {
 // }
 
 /*
- class FileBuilder {
-
- static get DefaultFileSet() {
- return {
- }
- }
-
- static rootWorkPath(name) {
- return name ? Path.join(ROOT_PATH, name) : Path.join(ROOT_PATH)
- }
-
- static localWorkPath(name) {
- return name ? Path.join(LOCAL_PATH, name) : Path.join(LOCAL_PATH)
- }
-
- static buildDefault() {
- return FileBuilder.buildFileSet(FileBuilder.DefaultFileSet)
- }
-
- static buildFileSet(fileSet) {
-
- if(!_.isObject(fileSet)) {
- throw new Error("Expected file set object.")
- }
-
- let timeStamp = new Date().toString()
- let testHdr = `Test ${timeStamp} `
-
  let observable = Rx.Observable.fromPromise(
  FileBuilder
  .removeWorkPaths()
@@ -157,84 +146,6 @@ export function buildDirectories (basePath, directoryList) {
 
  return observable
 
- function buildFiles(observable, fileList, mapFileInfo) {
- if(fileList && fileList.length) {
- observable = observable.concat(
- Rx.Observable
- .from(fileList)
- .map(mapFileInfo)
- .flatMap(fileInfo => {
- let dirName = Path.dirname(fileInfo.full)
- return mkdirpRx(dirName).map(() => fileInfo)
- })
- .flatMap(fileInfo =>
- writeFileRx(fileInfo.full, testHdr + fileInfo.name).map(() => fileInfo))
- )
- }
- return observable
- }
-
- function buildDirectories(observable, directoryList, mapDirectoryInfo) {
- if(directoryList && directoryList.length) {
- observable = observable.concat(
- Rx.Observable
- .from(directoryList)
- .map(mapDirectoryInfo)
- .flatMap(fileInfo => mkdirpRx(fileInfo.full).map(() => fileInfo))
- )
- }
- return observable
- }
-
- function buildSymLinks(observable, symLinkList, mapSymLinkInfo) {
- if(symLinkList && symLinkList.length) {
- observable = observable.concat(
- Rx.Observable
- .from(symLinkList)
- .map(mapSymLinkInfo)
- .flatMap(fileInfo => {
- if (process.platform === "win32") {
- let dirName = Path.dirname(fileInfo.full)
- return mkdirpRx(dirName).map(() => fileInfo)
- }
- else {
- return mkdirpRx(fileInfo.full).map(() => fileInfo)
- }
- })
- .flatMap(fileInfo =>
- symlinkRx(Path.join(fileInfo.base, fileInfo.toName), fileInfo.full, "junction")
- .map(() => fileInfo))
- )
- }
- return observable
- }
- }
-
- static removeWorkPaths() {
- return removePath(FileBuilder.localWorkPath())
- .then(removePath(FileBuilder.rootWorkPath()))
- }
-
- static createWorkPaths() {
- return createPath(FileBuilder.localWorkPath())
- .then(createPath(FileBuilder.rootWorkPath()))
- }
-
- static pathExists(workPath) {
- return new Promise((resolve, reject) => {
- FS.lstat(workPath, (err) => {
- if(err) {
- if(err.code === "ENOENT") {
- resolve(false)
- }
- reject(err)
- }
- else {
- resolve(true)
- }
- })
- })
- }
 
  static loadStats(fileInfo) {
  return Rx.Observable.create(observer => {
@@ -267,43 +178,4 @@ export function buildDirectories (basePath, directoryList) {
  }
  }
 
- function removePath(workPath) {
- return FileBuilder
- .pathExists(workPath)
- .then(pathExists => {
- if(pathExists) {
- return new Promise((resolve, reject) => {
- rimraf(workPath, err => {
- if(err) {
- reject(err)
- }
- else {
- resolve()
- }
- })
- })
- }
- })
- }
-
- function createPath(workPath) {
- return FileBuilder
- .pathExists(workPath)
- .then(pathExists => {
- if (!pathExists) {
- return new Promise((resolve, reject) => {
- FS.mkdir(workPath, "0755", err => {
- if (err) {
- reject(err)
- }
- else {
- resolve()
- }
- })
- })
- }
- })
- }
-
- export default FileBuilder
  */
