@@ -30,6 +30,7 @@ export function bashFileSearch (pattern, basedir) {
       } else {
         let matches = _(outputBuffer.toString().split(/\r*\n/))
           .filter((t) => t !== '')
+          .map((t) => t.replace(/\/$/, ''))
           .sortBy((t) => t.toLowerCase())
           .value()
         observer.next({ pattern, matches })

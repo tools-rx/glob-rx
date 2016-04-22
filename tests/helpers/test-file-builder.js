@@ -34,7 +34,7 @@ export const defaultFileSet = {
     'rewq'
   ],
   symLinks: [
-    [ 'a/symlink/a/b/c', 'a/symlink/a' ]
+    [ 'a/symlink/a/b/c', 'a/symlink' ]
   ]
 }
 

@@ -46,6 +46,9 @@ fdescribe('glob-rx', () => {
               .map((globNames) => ({ pattern, bashNames, globNames }))
           })
           .do((result) => {
+            console.log(JSON.stringify(pattern, null, 2))
+            console.log(JSON.stringify(result.bashNames, null, 2))
+            console.log(JSON.stringify(result.globNames, null, 2))
             expect(sortedFileList(result.globNames)).toEqual(sortedFileList(result.bashNames))
           })
           .subscribe(getSubscriber(done))
