@@ -85,97 +85,19 @@ export function buildDirectories (basePath, directoryList) {
 export function buildSymLinks (basePath, symLinkList) {
   return Observable.from(symLinkList || [])
     .map((paths) => {
-      let [symLinkName, directoryName] = paths;
+      let [symLinkName, directoryName] = paths
       let dirName = path.join(basePath, directoryName)
       let symLink = path.join(basePath, symLinkName)
       return { dirName, symLink, originalName: symLinkName }
     })
     .mergeMap((info) => {
-      let symLinkPath = info.symLink;
-      if (process.platform === "win32") {
+      let symLinkPath = info.symLink
+      if (process.platform === 'win32') {
         symLinkPath = path.dirname(symLinkPath)
       }
       return mkdirpRx(symLinkPath).map(() => info)
     })
     .mergeMap((info) => {
-      return symlinkRx(info.dirName, info.symLink, "junction").map(() => info.originalName)
+      return symlinkRx(info.dirName, info.symLink, 'junction').map(() => info.originalName)
     })
 }
-
-// export function buildFileSet(fileSet) {
-// }
-
-/*
- let observable = Rx.Observable.fromPromise(
- FileBuilder
- .removeWorkPaths()
- .then(() => FileBuilder.createWorkPaths())
- ).ignoreElements()
-
- observable = buildFiles(observable, fileSet.localFiles, fn => ({
- name: fn,
- base: FileBuilder.localWorkPath(),
- full: FileBuilder.localWorkPath(fn),
- isLocalFile: true
- }))
- observable = buildDirectories(observable, fileSet.localDirectories, fn => ({
- name: fn,
- base: FileBuilder.localWorkPath(),
- full: FileBuilder.localWorkPath(fn),
- isLocalDirectory: true
- }))
- observable = buildFiles(observable, fileSet.rootFiles, fn => ({
- name: fn,
- base: FileBuilder.rootWorkPath(),
- full: FileBuilder.rootWorkPath(fn),
- isRootFile: true
- }))
- observable = buildDirectories(observable, fileSet.rootDirectories, fn => ({
- name: fn,
- base: FileBuilder.rootWorkPath(),
- full: FileBuilder.rootWorkPath(fn),
- isRootDirectory: true
- }))
- observable = buildSymLinks(observable, fileSet.symLinks, symLink => ({
- name: symLink[0],
- toName: symLink[1],
- base: FileBuilder.localWorkPath(),
- full: FileBuilder.localWorkPath(symLink[0]),
- isSymLink: true
- }))
-
- return observable
-
-
- static loadStats(fileInfo) {
- return Rx.Observable.create(observer => {
- FS.stat(fileInfo.full, (err, stats) => {
- if (err) {
- observer.onError(err)
- }
- else {
- fileInfo.stats = stats
- observer.onNext(fileInfo)
- observer.onCompleted()
- }
- })
- })
- }
-
- static loadSymLinkStats(fileInfo) {
- return Rx.Observable.create(observer => {
- FS.lstat(fileInfo.full, (err, stats) => {
- if (err) {
- observer.onError(err)
- }
- else {
- fileInfo.stats = stats
- observer.onNext(fileInfo)
- observer.onCompleted()
- }
- })
- })
- }
- }
-
- */

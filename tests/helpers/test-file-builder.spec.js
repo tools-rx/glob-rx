@@ -249,20 +249,20 @@ describe('test file builder', () => {
         [ 'a/symlink/a/b/c', 'a/symlink/a' ]
       ]
       let expected = {
-        "pattern": "**/*",
-        "matches": [
-          "a",
-          "a/symlink",
-          "a/symlink/a",
-          "a/symlink/a/b",
-          "a/symlink/a/b/c",
-          "a/symlink/a/b/c/b"
+        'pattern': '**/*',
+        'matches': [
+          'a',
+          'a/symlink',
+          'a/symlink/a',
+          'a/symlink/a/b',
+          'a/symlink/a/b/c',
+          'a/symlink/a/b/c/b'
         ]
       }
       buildSymLinks(localWorkPath(), links)
         .reduce(concatListItems, [])
         .do((symLinkList) => {
-          expect(sortedFileList(symLinkList)).toEqual(sortedFileList(links.map(v => v[0])))
+          expect(sortedFileList(symLinkList)).toEqual(sortedFileList(links.map((v) => v[0])))
         })
         .flatMap(() => bashFileSearch('**/*', localWorkPath()))
         .do((actual) => {
