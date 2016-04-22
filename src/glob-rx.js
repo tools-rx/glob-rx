@@ -15,7 +15,7 @@ export function globRx (pattern, options) {
         if (err) {
           return observer.error(err)
         }
-        observer.next(fileList)
+        observer.next(fileList.map(fn => fn.replace(/[\/\\]$/, '')))
         observer.complete()
       })
 
