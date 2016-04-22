@@ -41,6 +41,8 @@ export const defaultFileSet = {
 export function buildFileSet (fileSet) {
   fileSet = fileSet || {}
   return Observable.concat(
+    cleanPath(localWorkPath()),
+    cleanPath(rootWorkPath()),
     buildFiles(LOCAL_PATH, fileSet.localFiles),
     buildDirectories(LOCAL_PATH, fileSet.localDirectories),
     buildFiles(ROOT_PATH, fileSet.rootFiles),

@@ -1,6 +1,9 @@
 /* eslint-env jasmine */
 
-// import {globRx} from '../src/glob-rx'
+import {buildFileSet, defaultFileSet, localWorkPath} from './helpers/test-file-builder'
+import {bashFileSearch} from './helpers/bash-file-search'
+import {getSubscriber, sortedFileList} from './helpers/test-helpers'
+import {globRx} from '../src/glob-rx'
 
 // put more patterns here.
 // anything that would be directly in / should be in /tmp/glob-test
@@ -24,11 +27,28 @@ let globTests = [
   'a/symlink/a/**/*'
 ]
 
-describe('glob-rx', () => {
+fdescribe('glob-rx', () => {
   describe('with default files', () => {
-    globTests.forEach((spec) => {
-      it(`it should glob expected names from ${spec}`, (done) => {
-        done()
+    beforeAll((done) => {
+      buildFileSet(defaultFileSet).subscribe(getSubscriber(done))
+    })
+
+    globTests.forEach((pattern) => {
+      it(`it should glob expected names from ${pattern}`, (done) => {
+        bashFileSearch(pattern, localWorkPath())
+          .mergeMap((bashResult) => {
+            let bashNames = bashResult.matches
+            return globRx(pattern, { cwd: localWorkPath() })
+              .reduce((names, globFile) => {
+                names.push(globFile.name)
+                return names
+              }, [])
+              .map((globNames) => ({ pattern, bashNames, globNames }))
+          })
+          .do((result) => {
+            expect(sortedFileList(result.globNames)).toEqual(sortedFileList(result.bashNames))
+          })
+          .subscribe(getSubscriber(done))
       })
     })
   })
