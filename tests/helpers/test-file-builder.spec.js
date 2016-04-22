@@ -12,7 +12,9 @@ import {
   cleanPath,
   buildFiles,
   buildDirectories,
-  buildSymLinks
+  buildSymLinks,
+  buildFileSet,
+  defaultFileSet
 } from './test-file-builder'
 import mkdirp from 'mkdirp'
 import {Observable} from 'rxjs'
@@ -267,6 +269,91 @@ describe('test file builder', () => {
         .flatMap(() => bashFileSearch('**/*', localWorkPath()))
         .do((actual) => {
           expect(sortedFileList(actual.matches)).toEqual(sortedFileList(expected.matches))
+        })
+        .subscribe(getSubscriber(done))
+    })
+  })
+
+  describe('build file set', () => {
+    beforeEach((done) => {
+      cleanPath(localWorkPath())
+        .concat(cleanPath(rootWorkPath()))
+        .subscribe(getSubscriber(done))
+    })
+
+    it('should build empty file set', (done) => {
+      buildFileSet()
+        .reduce(concatListItems, [])
+        .do((buildList) => {
+          expect(buildList).toEqual([])
+        })
+        .flatMap(() => {
+          return Observable.concat(
+            bashFileSearch('**/*', localWorkPath()),
+            bashFileSearch('**/*', rootWorkPath()))
+            .mergeMap(m => m.matches)
+            .reduce(concatListItems, [])
+        })
+        .do((actual) => {
+          expect(actual).toEqual([])
+        })
+        .subscribe(getSubscriber(done))
+    })
+
+    it('should build default file set', (done) => {
+      let expectedBuildFiles = defaultFileSet.localFiles
+        .concat(defaultFileSet.localDirectories)
+        .concat(defaultFileSet.rootFiles)
+        .concat(defaultFileSet.rootDirectories)
+        .concat(defaultFileSet.symLinks.map(s => s[0]))
+      let expected = [
+        'a',
+        'a/abcdef',
+        'a/abcdef/g',
+        'a/abcdef/g/h',
+        'a/abcfed',
+        'a/abcfed/g',
+        'a/abcfed/g/h',
+        'a/b',
+        'a/b/c',
+        'a/b/c/d',
+        'a/bc',
+        'a/bc/e',
+        'a/bc/e/f',
+        'a/c',
+        'a/c/d',
+        'a/c/d/c',
+        'a/c/d/c/b',
+        'a/cb',
+        'a/cb/e',
+        'a/cb/e/f',
+        'a/symlink',
+        'a/symlink/a',
+        'a/symlink/a/b',
+        'a/symlink/a/b/c',
+        'a/symlink/a/b/c/b',
+        'asdf',
+        'bar',
+        'baz',
+        'foo',
+        'quux',
+        'qwer',
+        'rewq'
+      ]
+      buildFileSet(defaultFileSet)
+        .reduce(concatListItems, [])
+        .do((buildList) => {
+          expect(sortedFileList(buildList)).toEqual(sortedFileList(expectedBuildFiles))
+        })
+        .flatMap(() => {
+          return Observable.concat(
+            bashFileSearch('**/*', localWorkPath()),
+            bashFileSearch('**/*', rootWorkPath()))
+            .mergeMap(m => m.matches)
+            .reduce(concatListItems, [])
+        })
+        .do((actual) => {
+          expect(sortedFileList(actual)).toEqual(sortedFileList(expected))
         })
         .subscribe(getSubscriber(done))
     })

@@ -25,6 +25,6 @@ export function globRx (pattern, options) {
         }
       }
     })
-    .flatMap((fileList) => Observable.from(fileList))
+    .mergeMap((fileList) => Observable.from(fileList))
     .map((name) => Object.assign(new GlobResultFile(), { basedir, name }))
 }

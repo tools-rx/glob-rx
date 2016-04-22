@@ -38,6 +38,16 @@ export const defaultFileSet = {
   ]
 }
 
+export function buildFileSet(fileSet) {
+  fileSet = fileSet || {};
+  return Observable.concat(
+    buildFiles(LOCAL_PATH, fileSet.localFiles),
+    buildDirectories(LOCAL_PATH, fileSet.localDirectories),
+    buildFiles(ROOT_PATH, fileSet.rootFiles),
+    buildDirectories(ROOT_PATH, fileSet.rootDirectories),
+    buildSymLinks(LOCAL_PATH, fileSet.symLinks))
+}
+
 export function unixStylePath (path) {
   return path.replace(/\\/g, '/')
 }
