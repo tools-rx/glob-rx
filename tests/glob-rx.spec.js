@@ -20,14 +20,14 @@ let globTests = [
   '+(a|b|c)/a{/,bc*}/**',
   '*/*/*/f',
   '**/f',
-  'a/symlink/a/b/c/a/b/c/a/b/c//a/b/c////a/b/c/**/b/c/**',
-  '{./*/*,/tmp/glob-test/*}',
-  '{/tmp/glob-test/*,*}',
+  // 'a/symlink/a/b/c/a/b/c/a/b/c//a/b/c////a/b/c/**/b/c/**',
+  // '{./*/*,/tmp/glob-test/*}',
+  // '{/tmp/glob-test/*,*}',
   'a/!(symlink)/**',
   'a/symlink/a/**/*'
 ]
 
-fdescribe('glob-rx', () => {
+describe('glob-rx', () => {
   describe('with default files', () => {
     beforeAll((done) => {
       buildFileSet(defaultFileSet).subscribe(getSubscriber(done))
@@ -46,9 +46,9 @@ fdescribe('glob-rx', () => {
               .map((globNames) => ({ pattern, bashNames, globNames }))
           })
           .do((result) => {
-            console.log(JSON.stringify(pattern, null, 2))
-            console.log(JSON.stringify(result.bashNames, null, 2))
-            console.log(JSON.stringify(result.globNames, null, 2))
+            // console.log(JSON.stringify(pattern, null, 2))
+            // console.log(JSON.stringify(result.bashNames, null, 2))
+            // console.log(JSON.stringify(result.globNames, null, 2))
             expect(sortedFileList(result.globNames)).toEqual(sortedFileList(result.bashNames))
           })
           .subscribe(getSubscriber(done))

@@ -40,14 +40,14 @@ export const defaultFileSet = {
 
 export function buildFileSet (fileSet) {
   fileSet = fileSet || {}
-  return Observable.concat(
-    cleanPath(localWorkPath()),
-    cleanPath(rootWorkPath()),
-    buildFiles(LOCAL_PATH, fileSet.localFiles),
-    buildDirectories(LOCAL_PATH, fileSet.localDirectories),
-    buildFiles(ROOT_PATH, fileSet.rootFiles),
-    buildDirectories(ROOT_PATH, fileSet.rootDirectories),
-    buildSymLinks(LOCAL_PATH, fileSet.symLinks))
+  return cleanPath(localWorkPath())
+    .concat(cleanPath(rootWorkPath()))
+    .ignoreElements()
+    .concat(buildFiles(LOCAL_PATH, fileSet.localFiles))
+    .concat(buildDirectories(LOCAL_PATH, fileSet.localDirectories))
+    .concat(buildFiles(ROOT_PATH, fileSet.rootFiles))
+    .concat(buildDirectories(ROOT_PATH, fileSet.rootDirectories))
+    .concat(buildSymLinks(LOCAL_PATH, fileSet.symLinks))
 }
 
 export function unixStylePath (path) {

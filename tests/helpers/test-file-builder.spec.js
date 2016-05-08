@@ -331,7 +331,7 @@ describe('test file builder', () => {
         'a/symlink/a',
         'a/symlink/a/b',
         'a/symlink/a/b/c',
-        'a/symlink/a/b/c/b',
+        'a/symlink/a/b/c/a',
         'asdf',
         'bar',
         'baz',
