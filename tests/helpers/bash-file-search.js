@@ -1,6 +1,7 @@
 import {Observable} from 'rxjs'
 import {spawn} from 'child_process'
 import _ from 'lodash'
+import {unixStylePath} from './test-file-builder'
 
 export const emptyBashFileSearchResult = {
   pattern: '**/*',
@@ -30,8 +31,9 @@ export function bashFileSearch (pattern, basedir) {
       } else {
         let matches = _(outputBuffer.toString().split(/\r*\n/))
           .filter((t) => t !== '')
-          .map((t) => t.replace(/\/$/, ''))
+          .map((t) => unixStylePath(t.replace(/\/$/, '')))
           .sortBy((t) => t.toLowerCase())
+          .uniq()
           .value()
         observer.next({ pattern, matches })
         observer.complete()
