@@ -1,13 +1,13 @@
 {
   "name": "glob-rx",
-  "version": "1.0.0-beta.5",
+  "version": "1.0.0-beta.6",
   "description": "RxJS wrapper around glob function.",
   "main": "dist/index.js",
   "jsnext:main": "src/index.js",
   "scripts": {
     "test": "babel-node scripts/run-tests",
-    "build": "babel --out-dir dist src",
-    "prebuild": "npm-run-all lint test clean",
+    "build": "npm-run-all lint test clean build:ts",
+    "build:ts": "babel --out-dir dist src",
     "lint": "standard",
     "clean": "rimraf dist"
   },
@@ -38,6 +38,7 @@
     "mkdirp": "^0.5.1",
     "npm-run-all": "^2.3.0",
     "rimraf": "^2.5.2",
-    "standard": "^7.1.2"
+    "standard": "^7.1.2",
+    "test-files-rx": "^1.0.0-beta.2"
   }
 }

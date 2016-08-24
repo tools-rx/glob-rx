@@ -2,11 +2,6 @@
 
 import _ from 'lodash'
 
-export function concatListItems (lst, item) {
-  lst.push(item)
-  return lst
-}
-
 export function getSubscriber (done) {
   return {
     next () { },

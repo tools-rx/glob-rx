@@ -1,8 +1,8 @@
 /* eslint-env jasmine */
 
-import {buildFileSet, defaultFileSet, localWorkPath} from './helpers/test-file-builder'
-import {bashFileSearch} from './helpers/bash-file-search'
-import {getSubscriber, sortedFileList} from './helpers/test-helpers'
+import path from 'path'
+import {bashFileSearch, buildFileSet, defaultFileSet} from 'test-files-rx'
+import {getSubscriber, sortedFileList} from './test-helpers'
 import {globRx} from '../src/glob-rx'
 
 // put more patterns here.
@@ -20,6 +20,7 @@ let globTests = [
   '+(a|b|c)/a{/,bc*}/**',
   '*/*/*/f',
   '**/f',
+  // TODO: These are failing on Windows
   // 'a/symlink/a/b/c/a/b/c/a/b/c//a/b/c////a/b/c/**/b/c/**',
   // '{./*/*,/tmp/glob-test/*}',
   // '{/tmp/glob-test/*,*}',
@@ -27,18 +28,23 @@ let globTests = [
   'a/symlink/a/**/*'
 ]
 
+const fileSet = Object.assign(defaultFileSet, {
+  rootPath: '/tmp/glob-test',
+  localPath: path.join(__dirname, '..', 'glob-test')
+})
+
 describe('glob-rx', () => {
   describe('with default files', () => {
     beforeAll((done) => {
-      buildFileSet(defaultFileSet).subscribe(getSubscriber(done))
+      buildFileSet(fileSet).subscribe(getSubscriber(done))
     })
 
     globTests.forEach((pattern) => {
       it(`it should glob expected names from ${pattern}`, (done) => {
-        bashFileSearch(pattern, localWorkPath())
+        bashFileSearch(pattern, fileSet.localPath)
           .mergeMap((bashResult) => {
             let bashNames = bashResult.matches
-            return globRx(pattern, { cwd: localWorkPath() })
+            return globRx(pattern, { cwd: fileSet.localPath })
               .reduce((names, globFile) => {
                 names.push(globFile.name)
                 return names
