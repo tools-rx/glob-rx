@@ -5,8 +5,10 @@
 [![bitHound Dependencies](https://www.bithound.io/github/tools-rx/glob-rx/badges/dependencies.svg)](https://www.bithound.io/github/tools-rx/glob-rx/master/dependencies/npm)
 [![bitHound Dev Dependencies](https://www.bithound.io/github/tools-rx/glob-rx/badges/devDependencies.svg)](https://www.bithound.io/github/tools-rx/glob-rx/master/dependencies/npm)
 
-[![Travis](https://img.shields.io/travis/tools-rx/glob-rx.svg?branch=master&maxAge=2592000)](https://travis-ci.org/tools-rx/glob-rx)
+[![Build Status](https://travis-ci.org/tools-rx/glob-rx.svg?branch=master)](https://travis-ci.org/tools-rx/glob-rx)
 _(Linux/OSX)_
+[![Visual Studio Team services](https://img.shields.io/vso/build/dfbaskin/e1edc0bb-220a-4bfc-a210-eee3d06bfcfe/2.svg?maxAge=2592000)]()
+_(Windows)_
 
 RxJS Wrapper around the [glob](https://github.com/isaacs/node-glob) function.
 
