@@ -4,6 +4,7 @@
 [![npm](https://img.shields.io/npm/v/glob-rx.svg?maxAge=2592000)](https://www.npmjs.com/package/glob-rx)
 [![bitHound Dependencies](https://www.bithound.io/github/tools-rx/glob-rx/badges/dependencies.svg)](https://www.bithound.io/github/tools-rx/glob-rx/master/dependencies/npm)
 [![bitHound Dev Dependencies](https://www.bithound.io/github/tools-rx/glob-rx/badges/devDependencies.svg)](https://www.bithound.io/github/tools-rx/glob-rx/master/dependencies/npm)
+[![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 
 | Linux/OSX | Windows |
 | --- | --- |
