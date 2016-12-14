@@ -3,11 +3,22 @@ dist: trusty
 os:
   - linux
   - osx
+cache:
+  yarn: true
+notifications:
+  email: false
 language: node_js
 node_js:
+  - "7"
   - "6"
-  - "5"
   - "4"
+before_script:
+  - npm prune
+after_success:
+  - npm run semantic-release
+branches:
+  except:
+    - /^v\d+\.\d+\.\d+$/
 before_install:
   # Need Bash 4.3 - globs don't follow symlinks
   - bash --version
