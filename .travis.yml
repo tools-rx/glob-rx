@@ -9,16 +9,28 @@ notifications:
   email: false
 language: node_js
 node_js:
-  - "7"
-  - "6"
-  - "4"
-before_script:
-  - npm prune
-after_success:
-  - npm run semantic-release
+  - 7
+  - 6
+env: INSTALL_CMD="yarn"
+matrix:
+  include:
+    - node_js: 4
+      env: INSTALL_CMD="npm install"
+      os: linux
+    - node_js: 4
+      env: INSTALL_CMD="npm install"
+      os: osx
+install:
+  - $INSTALL_CMD
 branches:
   except:
     - /^v\d+\.\d+\.\d+$/
+before_script:
+  - npm prune
+script:
+  - npm run build
+after_success:
+  - npm run semantic-release
 before_install:
   # Need Bash 4.3 - globs don't follow symlinks
   - bash --version
