@@ -1,7 +1,6 @@
 import path from 'path'
 
 export class GlobResultFile {
-
   get fullname () {
     if (this.hasName) {
       return path.join(this.basedir || '', this.name)
